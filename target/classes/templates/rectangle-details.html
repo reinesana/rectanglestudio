@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Rectangle Details</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+            background-color: #f5f7fa;
+            font-family: 'Arial', sans-serif;
+        }
+        .container {
+            margin-top: 20px;
+        }
+        .rectangle-preview {
+            position: relative;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: black;
+            font-weight: bold;
+            text-align: center;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+        .color-preview {
+            width: 20px;
+            height: 20px;
+            display: inline-block;
+            border: 1px solid #000;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+        .table th, .table td {
+            vertical-align: middle;
+        }
+        .table .form-control {
+            height: calc(1.5em + .75rem + 2px);
+        }
+        .input-group-append .form-control {
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+        }
+        .btn-primary {
+            background-color: #7b00ff;
+            padding-left: 23px;
+            padding-right: 23px;
+            border-color: #798490;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .btn-primary:hover {
+            background-color: #7b00ffb5;
+            padding-left: 23px;
+            padding-right: 23px;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            border-color: #798490;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+            border-color: #6c757d;
+        }
+        .btn-secondary:hover {
+            background-color: #5a6268;
+            border-color: #545b62;
+        }
+        .ui {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Rectangle Details</h1>
+        <form th:action="@{/rectangles/update}" method="post">
+            <input type="hidden" th:value="${rectangle.pid}" name="pid"/>
+            <div class="rectangle-preview" th:style="'width:' + ${rectangle.width} + 'px; height:' + ${rectangle.height} + 'px; background-color:#' + ${rectangle.color}">
+                <span th:text="${rectangle.name}"></span>
+            </div>
+            <table class="table table-bordered">
+                <tr>
+                    <th>Name</th>
+                    <td>
+                        <input type="text" class="form-control" th:value="${rectangle.name}" name="name" required/>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Width</th>
+                    <td>
+                        <input type="number" class="form-control" th:value="${rectangle.width}" name="width" required/>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Height</th>
+                    <td>
+                        <input type="number" class="form-control" th:value="${rectangle.height}" name="height" required/>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Color</th>
+                    <td>
+                        <div class="input-group">
+                            <input type="text" class="form-control" th:value="${rectangle.color}" name="color" id="color" oninput="toUpperCase(this); syncPickerInput(this, document.getElementById('colorPicker'))" required/>
+                            <div class="input-group-append">
+                                <input type="color" class="form-control" id="colorPicker" oninput="syncColorInputs(document.getElementById('color'), this)">
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+        </form>
+        <a href="/rectangles" class="btn btn-secondary ui">Back to List</a>
+    </div>
+    <script>
+        function toUpperCase(element) {
+            element.value = element.value.toUpperCase();
+        }
+
+        function isValidHexColor(color) {
+            const hexColorPattern = /^([A-Fa-f0-9]{3}|[A-Fa-f0-9]{6})$/;
+            return hexColorPattern.test(color);
+        }
+
+        function syncColorInputs(hexInput, pickerInput) {
+            hexInput.value = pickerInput.value.substring(1).toUpperCase();
+        }
+
+        function syncPickerInput(hexInput, pickerInput) {
+            if (isValidHexColor(hexInput.value)) {
+                pickerInput.value = '#' + hexInput.value;
+            }
+        }
+    </script>
+</body>
+</html>

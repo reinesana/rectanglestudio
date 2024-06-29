@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Rectangle Studio</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+            background-color: #f5f7fa;
+            font-family: 'Arial', sans-serif;
+        }
+        .sidebar {
+            width: 240px;
+            height: 100vh;
+            position: fixed;
+            color: #000;
+            font-family: Verdana, Geneva, Tahoma, sans-serif;
+            padding-top: 20px;
+            background: rgba(118, 86, 226, 0.167);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+        .sidebar h2 {
+            text-align: center;
+        }
+        .sidebar .nav-link {
+            color: #5b597c;
+            margin: 15px 0;
+            padding: 10px 20px;
+        }
+        .sidebar .nav-link:hover, .sidebar .nav-link.active {
+            background-color: #641fd315;
+            border-radius: 5px;
+        }
+        .main-content {
+            margin-left: 260px;
+            padding: 20px;
+        }
+        .navbar {
+            background-color: #f8f9fa;
+            padding: 10px 20px;
+            margin-bottom: 20px;
+        }
+        .navbar .navbar-brand {
+            font-weight: bold;
+        }
+        .navbar .navbar-nav .nav-link {
+            margin-right: 20px;
+        }
+        .card-header {
+            background: rgba(169, 131, 221, 0.762);
+            border-radius: 20px;
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.33);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+        .card-body {
+        }
+        .table th, .table td {
+            vertical-align: middle;
+        }
+        .table .form-control {
+            height: calc(1.5em + .75rem + 2px);
+        }
+        .input-group-append .form-control {
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+        }
+        .color-preview {
+            width: 20px;
+            height: 20px;
+            display: inline-block;
+            border: 1px solid #000;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+        .btn-primary {
+            background-color: #7b00ff;
+            padding-left: 23px;
+            padding-right: 23px;
+            border-color: #798490;
+            border-radius: 5px;
+            border: 1px solid rgba(255, 255, 255, 0.3)
+        }
+        .btn-primary:hover {
+            background-color: #7b00ffb5;
+            padding-left: 23px;
+            padding-right: 23px;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            border-color: #798490;
+            border-radius: 5px;
+            border: 1px solid rgba(255, 255, 255, 0.3)
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+            border-color: #6c757d;
+        }
+        .btn-secondary:hover {
+            background-color: #5a6268;
+            border-color: #545b62;
+        }
+        .table thead {
+            background-color: #8c84a239;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar d-flex flex-column p-3">
+        <h2>Rectangle Studio</h2>
+        <ul class="nav nav-pills flex-column mb-auto">
+            <li class="nav-item">
+                <a href="#" class="nav-link active">
+                    <i class="fas fa-home"></i> Home
+                </a>
+            </li>
+            <li>
+                <a href="#" class="nav-link">
+                    <i class="fas fa-cog"></i> Settings
+                </a>
+            </li>
+            <li>
+                <a href="#" class="nav-link">
+                    <i class="fas fa-user"></i> Accounts
+                </a>
+            </li>
+        </ul>
+    </div>
+    <div class="main-content">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <a class="navbar-brand" href="#">Welcome to Rectangle Studio</a>
+        </nav>
+        <div class="card">
+            <div class="card-header">
+                <h3>Your Rectangles</h3>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped">
+                    <thead class="thead">
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Width</th>
+                            <th>Height</th>
+                            <th>Color</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="rectangle, iterStat : ${rectangles}">
+                            <td th:text="${iterStat.index + 1}"></td>
+                            <td>
+                                <a th:href="@{/rectangles/{pid}(pid=${rectangle.pid})}" th:text="${rectangle.name}"></a>
+                            </td>
+                            <td th:text="${rectangle.width}"></td>
+                            <td th:text="${rectangle.height}"></td>
+                            <td>
+                                <span th:text="'#' + ${rectangle.color}"></span>
+                                <div class="color-preview" th:style="'background-color:#' + ${rectangle.color}"></div>
+                            </td>
+                            <td>
+                                <a th:href="@{/rectangles/delete/{pid}(pid=${rectangle.pid})}" class="btn btn-danger btn-sm">DELETE</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <form th:action="@{/rectangles}" method="post" onsubmit="return validateForm()">
+                                <td>New</td>
+                                <td><input type="text" class="form-control" name="name" required></td>
+                                <td><input type="number" class="form-control" name="width" required></td>
+                                <td><input type="number" class="form-control" name="height" required></td>
+                                <td>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" name="color" id="color" oninput="toUpperCase(this); syncPickerInput(this, document.getElementById('colorPicker'))" required>
+                                        <div class="input-group-append">
+                                            <input type="color" class="form-control" id="colorPicker" oninput="syncColorInputs(document.getElementById('color'), this)">
+                                        </div>
+                                    </div>
+                                </td>
+                                <td><button type="submit" class="btn btn-primary btn-sm">Add</button></td>
+                            </form>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <script>
+        function toUpperCase(element) {
+            element.value = element.value.toUpperCase();
+        }
+
+        function isValidHexColor(color) {
+            const hexColorPattern = /^([A-Fa-f0-9]{3}|[A-Fa-f0-9]{6})$/;
+            return hexColorPattern.test(color);
+        }
+
+        function validateForm() {
+            const colorInput = document.getElementById('color').value;
+            const errorDiv = document.getElementById('error-message');
+            if (!isValidHexColor(colorInput)) {
+                errorDiv.textContent = 'Invalid colour hex code.';
+                return false;
+            }
+            errorDiv.textContent = '';
+            return true;
+        }
+
+        function syncColorInputs(hexInput, pickerInput) {
+            hexInput.value = pickerInput.value.substring(1).toUpperCase();
+        }
+
+        function syncPickerInput(hexInput, pickerInput) {
+            if (isValidHexColor(hexInput.value)) {
+                pickerInput.value = '#' + hexInput.value;
+            }
+        }
+    </script>
+</body>
+</html>
